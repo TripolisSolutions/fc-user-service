@@ -46,6 +46,12 @@ func GetUser(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	}).Fatal("Get user by tenant and id")
 }
 
+func UpdateUser(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+}
+
+func DeleteUser(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+}
+
 func readUserReqData(req *http.Request) (*User, error) {
 	requestData := &User{}
 	decoder := json.NewDecoder(req.Body)
