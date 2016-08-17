@@ -77,14 +77,6 @@ func main() {
 		for {
 			select {
 			case <-rabbitcage.AmqpReady:
-				//				buildListJobs := rabbitcage.Jobs(listServiceSettings.ProjectEnvSettings.BuildListQueue, listServiceSettings.ProjectEnvSettings.Buffer)
-				//				membersBuilder.StartConsumers(buildListJobs, listServiceSettings.ProjectEnvSettings.ListUpsertWorksers)
-
-				//				upsertJobs := rabbitcage.Jobs(listServiceSettings.ProjectEnvSettings.ListUpsertQueue, listServiceSettings.ProjectEnvSettings.Buffer)
-				//				StartListUpsertConsumers(upsertJobs, listServiceSettings.ProjectEnvSettings.ListUpsertWorksers)
-
-				//				splitListJobs := rabbitcage.Jobs(listServiceSettings.ProjectEnvSettings.SplitListQueue, listServiceSettings.ProjectEnvSettings.Buffer)
-				//				splitLists.StartSplitListConsumers(splitListJobs, listServiceSettings.ProjectEnvSettings.SplitListWorkers)
 			}
 		}
 	}()
@@ -102,11 +94,11 @@ func main() {
 
 	user := goji.NewMux()
 	user.Use(middleware.JSON)
-	user.HandleFuncC(pat.Post("/tenants/:tenant_uuid/users"), CreateUser)
-	user.HandleFuncC(pat.Get("/tenants/:tenant_uuid/users/:user_id"), GetUser)
-	user.HandleFuncC(pat.Put("/tenants/:tenant_uuid/users/:user_id"), UpdateUser)
-	user.HandleFuncC(pat.Delete("/tenants/:tenant_uuid/users/:user_id"), DeleteUser)
-	mux.HandleC(pat.New("/tenants/:tenant_uuid/*"), user)
+	user.HandleFuncC(pat.Post("/tenants/:tenant_id/users"), CreateUser)
+	user.HandleFuncC(pat.Get("/tenants/:tenant_id/users/:user_id"), GetUser)
+	user.HandleFuncC(pat.Put("/tenants/:tenant_id/users/:user_id"), UpdateUser)
+	user.HandleFuncC(pat.Delete("/tenants/:tenant_id/users/:user_id"), DeleteUser)
+	mux.HandleC(pat.New("/tenants/:tenant_id/*"), user)
 
 	srv := &graceful.Server{
 		Timeout: 3 * time.Second,

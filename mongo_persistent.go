@@ -22,8 +22,8 @@ func (user User) Insert(tenantID string) error {
 		return err
 	}
 
-	user.updatedAt = time.Now()
-	user.createdAt = time.Now()
+	user.UpdatedAt = time.Now()
+	user.CreatedAt = time.Now()
 
 	if err := mongo.Execute("monotonic", UserCollection(tenantID),
 		func(collection *mgo.Collection) error {
@@ -40,11 +40,11 @@ func (user User) Update(tenantID string) error {
 		return err
 	}
 
-	user.updatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 
 	if err := mongo.Execute("monotonic", UserCollection(tenantID),
 		func(collection *mgo.Collection) error {
-			return collection.UpdateId(user.id, user)
+			return collection.UpdateId(user.ID, user)
 		}); err != nil {
 		return err
 	}
@@ -54,11 +54,10 @@ func (user User) Update(tenantID string) error {
 
 // Delete user
 func (user User) Delete(tenantID string) error {
-
 	if err := mongo.Execute("monotonic", UserCollection(tenantID),
 		func(collection *mgo.Collection) error {
 			return collection.Remove(bson.M{
-				"id": user.id,
+				"id": user.ID,
 			})
 		}); err != nil {
 		return err
@@ -68,8 +67,8 @@ func (user User) Delete(tenantID string) error {
 }
 
 // FindByID user
-func (user *User) FindByID(tenant string, id string) error {
-	if err := mongo.FindByID(user, UserCollection(tenant), id, nil); err != nil {
+func (user *User) FindByID(tenantID string, id string) error {
+	if err := mongo.FindByID(user, UserCollection(tenantID), id, nil); err != nil {
 		return err
 	}
 	return nil
