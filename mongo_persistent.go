@@ -67,9 +67,23 @@ func (user User) Delete(tenantID string) error {
 }
 
 // FindByID user
-func (user *User) FindByID(tenantID string, id string) error {
-	if err := mongo.FindByID(user, UserCollection(tenantID), id, nil); err != nil {
+func (user *User) FindByID(tenantID string) error {
+	if err := mongo.FindByID(user, UserCollection(tenantID), user.ID, nil); err != nil {
 		return err
 	}
 	return nil
+}
+
+// FindUsers ...
+func FindUsers(tenantID string) (users []User, err error) {
+	//	if err := mongo.Execute("monotonic", UserCollection(tenantID),
+	//		func(collection *mgo.Collection) error {
+	//			return collection.Find(bson.M{
+	//				"module": module,
+	//			}).All(&categories)
+	//		}); err != nil {
+	//		return categories, err
+	//	}
+
+	return users, nil
 }

@@ -81,13 +81,6 @@ func main() {
 		}
 	}()
 
-	log.WithFields(log.Fields{}).Fatal("Initializing Mongo connection")
-
-	if err := mongo.Startup(); err != nil {
-		log.WithFields(log.Fields{}).Fatal("Mongo startup failed")
-		os.Exit(1)
-	}
-
 	mux := goji.NewMux()
 	mux.UseC(relicWrapper.HandleHTTPC)
 	mux.HandleFunc(pat.Get("/"), Root)
@@ -96,6 +89,7 @@ func main() {
 	user.Use(middleware.JSON)
 	user.HandleFuncC(pat.Post("/tenants/:tenant_id/users"), CreateUser)
 	user.HandleFuncC(pat.Get("/tenants/:tenant_id/users/:user_id"), GetUser)
+	user.HandleFuncC(pat.Get("/tenants/:tenant_id/users"), GetUsers)
 	user.HandleFuncC(pat.Put("/tenants/:tenant_id/users/:user_id"), UpdateUser)
 	user.HandleFuncC(pat.Delete("/tenants/:tenant_id/users/:user_id"), DeleteUser)
 	mux.HandleC(pat.New("/tenants/:tenant_id/*"), user)
