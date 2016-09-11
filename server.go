@@ -77,6 +77,14 @@ func main() {
 		for {
 			select {
 			case <-rabbitcage.AmqpReady:
+				insertJobs := rabbitcage.Jobs(ProjectEnvSettings.EventUsersCreatedQueue, ProjectEnvSettings.Buffer)
+				StartConsumers(insertJobs, ProjectEnvSettings.Workers, "insert")
+
+				updateJobs := rabbitcage.Jobs(ProjectEnvSettings.EventUsersUpdatedQueue, ProjectEnvSettings.Buffer)
+				StartConsumers(updateJobs, ProjectEnvSettings.Workers, "update")
+
+				deleteJobs := rabbitcage.Jobs(ProjectEnvSettings.EventUsersDeletedQueue, ProjectEnvSettings.Buffer)
+				StartConsumers(deleteJobs, ProjectEnvSettings.Workers, "delete")
 			}
 		}
 	}()

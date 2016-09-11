@@ -11,6 +11,7 @@ type envSettings struct {
 	EventUsersUpdatedQueue string `envconfig:"event_users" default:"event.users.updated"`
 	EventUsersDeletedQueue string `envconfig:"event_users" default:"event.users.deleted"`
 	Buffer                 int    `envconfig:"buffer" default:10`
+	Workers                int    `envconfig:"workers" default:3`
 }
 
 // ProjectEnvSettings variable

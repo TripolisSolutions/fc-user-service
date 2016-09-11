@@ -17,7 +17,7 @@ func UserCollection(tenantID string) string {
 }
 
 // Insert user
-func (user User) Insert(tenantID string) error {
+func (user *User) Insert(tenantID string) error {
 	if err := validator.Validate(user); err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func (user User) Insert(tenantID string) error {
 }
 
 // Update user
-func (user User) Update(tenantID string) error {
+func (user *User) Update(tenantID string) error {
 	if err := validator.Validate(user); err != nil {
 		return err
 	}
@@ -53,11 +53,11 @@ func (user User) Update(tenantID string) error {
 }
 
 // Delete user
-func (user User) Delete(tenantID string) error {
+func deleteUserByID(tenantID, userID string) error {
 	if err := mongo.Execute("monotonic", UserCollection(tenantID),
 		func(collection *mgo.Collection) error {
 			return collection.Remove(bson.M{
-				"id": user.ID,
+				"id": userID,
 			})
 		}); err != nil {
 		return err
@@ -74,16 +74,28 @@ func (user *User) FindByID(tenantID string) error {
 	return nil
 }
 
-// FindUsers ...
-func FindUsers(tenantID string) (users []User, err error) {
-	//	if err := mongo.Execute("monotonic", UserCollection(tenantID),
-	//		func(collection *mgo.Collection) error {
-	//			return collection.Find(bson.M{
-	//				"module": module,
-	//			}).All(&categories)
-	//		}); err != nil {
-	//		return categories, err
-	//	}
+// FindUsers find users based on params
+func FindUsers(tenantID string, filteres bson.M, limit, offset int) ([]User, error) {
+	var users []User
+	if err := mongo.Execute("monotonic", UserCollection(tenantID), func(collection *mgo.Collection) error {
+		return collection.Find(filteres).Limit(limit).Skip(offset).Sort("-c_at").All(&users)
+	}); err != nil {
+		return users, err
+	}
 
 	return users, nil
+}
+
+// CountUsers count user based on params
+func CountUsers(tenantID string, filteres bson.M) (int, error) {
+	var result int
+	if err := mongo.Execute("monotonic", UserCollection(tenantID), func(collection *mgo.Collection) error {
+		count, err := collection.Find(filteres).Count()
+		result = count
+		return err
+	}); err != nil {
+		return result, err
+	}
+
+	return result, nil
 }
